@@ -1,0 +1,8 @@
+
+fastapi
+uvicorn
+chromadb>=0.5.0
+openai>=1.0.0
+pydantic
+tiktoken
+python-dotenv
