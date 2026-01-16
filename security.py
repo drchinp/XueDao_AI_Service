@@ -1,4 +1,5 @@
-
+from dotenv import load_dotenv
+load_dotenv("/var/www/xuedao-ai-service/.env")
 from fastapi import Header, HTTPException
 import os
 

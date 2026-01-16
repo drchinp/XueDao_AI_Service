@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv("/var/www/xuedao-ai-service/.env")
+
 
 from fastapi import FastAPI, Depends
 from schemas import ChatRequest

@@ -1,6 +1,7 @@
 # chroma_client.py
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv("/var/www/xuedao-ai-service/.env")
+
 
 import os
 import chromadb
