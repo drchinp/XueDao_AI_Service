@@ -3,15 +3,11 @@ import os
 
 API_KEY = os.getenv("AI_SERVICE_KEY")
 
-def verify_key(x_api_key: str = Header(None)):
+def verify_key(
+    x_api_key: str = Header(None, alias="X-API-Key")
+):
     if not API_KEY:
-        raise HTTPException(
-            status_code=500,
-            detail="Server API key not configured (AI_SERVICE_KEY missing)"
-        )
+        raise HTTPException(status_code=500, detail="Server API key not configured")
 
-    if not x_api_key or x_api_key != API_KEY:
-        raise HTTPException(
-            status_code=403,
-            detail="Invalid or missing API key"
-        )
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=403, detail="Invalid API key")
