@@ -16,33 +16,62 @@ Rules:
 - Do NOT fabricate institutional policy
 """
 
+MODE_CONFIG = {
+    "design_guidance": {
+        "collection": "pedagogy_frameworks",
+        "system_suffix": (
+            "Focus on curriculum design, learning outcomes, "
+            "constructive alignment, and teaching strategies."
+        )
+    },
+    "assessment_designer": {
+        "collection": "assessment_frameworks",
+        "system_suffix": (
+            "Focus on assessment design, rubrics, CLO alignment, "
+            "formative vs summative assessment, and validity."
+        )
+    }
+}
+
+
 def teacher_answer(req):
     try:
         print("▶ Teacher query received")
         print("Tenant:", req.tenant_id, "Course:", req.course_id)
         print("Mode:", req.mode)
 
+        if req.mode not in MODE_CONFIG:
+            return f"Unsupported teacher mode: {req.mode}"
+
+        mode_cfg = MODE_CONFIG[req.mode]
+
         # Lazy init OpenAI (prevents startup crash)
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-        pedagogy = get_collection("pedagogy_frameworks")
+        collection_name = mode_cfg["collection"]
+        system_prompt = SYSTEM_BASE + "\n\n" + mode_cfg["system_suffix"]
 
-        print("▶ Querying pedagogy framework DB...")
-        res = pedagogy.query(
+        print(f"▶ Using collection: {collection_name}")
+
+        collection = get_collection(collection_name)
+
+        print("▶ Querying scoped RAG DB...")
+        res = collection.query(
             query_texts=[req.question],
             n_results=5
-            # NOTE: no `where` yet; add later if tenant-scoped
+            # Future-safe: add tenant / course filter here
+            # where={"tenant_id": req.tenant_id}
         )
 
         docs = res.get("documents", [[]])[0]
         docs = [d for d in docs if isinstance(d, str)]
 
-        print("▶ Retrieved pedagogy docs:", docs)
+        print("▶ Retrieved docs:", docs)
 
         if not docs:
             context = (
-                "No specific pedagogy framework text was found. "
-                "Rely on general instructional design principles."
+                "No specific reference material was found. "
+                "Rely on general academic best practices."
             )
         else:
             context = "\n\n".join(docs)
@@ -52,11 +81,11 @@ def teacher_answer(req):
         out = client.chat.completions.create(
             model="gpt-4.1-mini",
             messages=[
-                {"role": "system", "content": SYSTEM},
+                {"role": "system", "content": system_prompt},
                 {
                     "role": "user",
                     "content": (
-                        f"Pedagogical context:\n{context}\n\n"
+                        f"Reference context:\n{context}\n\n"
                         f"Teacher question:\n{req.question}"
                     )
                 }
