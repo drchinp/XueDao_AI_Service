@@ -33,6 +33,7 @@ def student_answer(req):
             }
         )
 
+        print("▶ METADATAS:", res.get("metadatas"))
         print("▶ Raw Chroma result:", res)
 
         docs = res.get("documents", [[]])[0]
