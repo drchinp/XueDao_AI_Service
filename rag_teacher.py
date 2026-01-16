@@ -4,7 +4,7 @@ from openai import OpenAI
 import os
 import traceback
 
-SYSTEM = """
+SYSTEM_BASE = """
 You are an instructional design copilot for educators.
 
 Rules:
