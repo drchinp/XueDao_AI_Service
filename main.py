@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
-load_dotenv("/var/www/xuedao-ai-service/.env")
+load_dotenv()
+
 
 
 from fastapi import FastAPI, Depends
