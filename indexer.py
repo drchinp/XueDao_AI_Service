@@ -12,9 +12,10 @@ def index_course(items):
 
         metadatas.append({
             "tenant_id": str(item.tenant_id),
-            "course_id": str(item.course_id),   # keep as string
-            "module": item.module,
-            "title": item.title
+            "course_id": str(item.course_id),
+            "module": str(item.module),
+            "scope": str(item.scope),  # ✅ THIS IS THE FIX
+            "title": str(item.title)
         })
 
         ids.append(
