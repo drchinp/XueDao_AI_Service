@@ -47,7 +47,10 @@ def student_answer(req):
 
         return response.choices[0].message.content.strip()
 
+
     except Exception as e:
-        print("❌ STUDENT RAG ERROR")
+
+        import traceback
         traceback.print_exc()
-        return "Internal error occurred. Check server logs."
+        return f"Internal error: {str(e)}"
+
