@@ -72,7 +72,7 @@ async def index_pdf(
     tenant_id: str = Form(...),
     course_id: int = Form(...),
     module: str = Form(...),
-    scope: str = Form(...),
+    scope: str = Form(...),   # kept for API compatibility
     title: str = Form(...)
 ):
     pdf_bytes = await file.read()
@@ -86,15 +86,14 @@ async def index_pdf(
     items = []
     for i, chunk in enumerate(chunks):
         items.append({
-            "tenant_id": tenant_id,
-            "course_id": course_id,
+            # 🔒 HARDENED METADATA CONTRACT
+            "tenant_id": str(tenant_id),
+            "course_id": str(course_id),           # ✅ FORCE STRING
+            "scope": "course_content",              # ✅ ENFORCE (ignore input)
             "module": module,
-            "scope": scope,
             "title": f"{title} (part {i+1})",
             "content": chunk
         })
 
-    # ✅ wrap correctly
     req = IndexRequest(items=items)
     return index_course(req.items)
-
