@@ -86,12 +86,11 @@ async def index_pdf(
     items = []
     for i, chunk in enumerate(chunks):
         items.append({
-            # 🔒 HARDENED METADATA CONTRACT
             "tenant_id": str(tenant_id),
-            "course_id": str(course_id),           # ✅ FORCE STRING
-            "scope": "course_content",              # ✅ ENFORCE (ignore input)
+            "course_id": str(course_id),
+            "scope": "course_content",  # 🔥 FORCE IT HERE
             "module": module,
-            "title": f"{title} (part {i+1})",
+            "title": f"{title} (part {i + 1})",
             "content": chunk
         })
 
