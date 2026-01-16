@@ -14,12 +14,10 @@ def student_answer(req):
         print("▶ Querying ChromaDB...")
         res = collection.query(
             query_texts=[req.question],
-            n_results=5,
+            n_results=3,
             where={
-                "$and": [
-                    {"tenant_id": req.tenant_id},
-                    {"course_id": req.course_id}
-                ]
+                "tenant_id": str(req.tenant_id),
+                "course_id": str(req.course_id)
             }
         )
 
