@@ -77,16 +77,12 @@ async def index_pdf(
 ):
     pdf_bytes = await file.read()
 
-    # 1️⃣ Extract text from PDF
     full_text = extract_text_from_pdf_bytes(pdf_bytes)
-
     if not full_text.strip():
         return {"error": "No extractable text found in PDF"}
 
-    # 2️⃣ Chunk text
     chunks = chunk_text(full_text)
 
-    # 3️⃣ Prepare items for existing indexer
     items = []
     for i, chunk in enumerate(chunks):
         items.append({
@@ -95,9 +91,10 @@ async def index_pdf(
             "module": module,
             "scope": scope,
             "title": f"{title} (part {i+1})",
-            "content": chunk,
-            "source": "moodle_pdf"
+            "content": chunk
         })
 
-    # 4️⃣ Reuse existing index logic
-    return index_course(items)
+    # ✅ wrap correctly
+    req = IndexRequest(items=items)
+    return index_course(req.items)
+
