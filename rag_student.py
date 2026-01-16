@@ -27,10 +27,7 @@ def student_answer(req):
 
         res = collection.query(
             query_texts=[req.question],
-            n_results=5,
-            where={
-                "$and": filters
-            }
+            n_results=5
         )
 
         print("▶ METADATAS:", res.get("metadatas"))
