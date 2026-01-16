@@ -1,7 +1,12 @@
 import os
 from dotenv import load_dotenv
-load_dotenv()
 
+ENV_PATH = os.path.join(os.path.dirname(__file__), ".env")
+load_dotenv(ENV_PATH)
+
+print("🔥 AI_SERVICE_KEY loaded:", os.getenv("AI_SERVICE_KEY"))
+
+from fastapi import FastAPI
 
 
 from fastapi import FastAPI, Depends
