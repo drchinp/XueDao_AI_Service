@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class ChatRequest(BaseModel):
@@ -8,6 +8,7 @@ class ChatRequest(BaseModel):
     role: str
     mode: str
     question: str
+    module: Optional[str] = None   # NEW
 
 
 class CourseChunk(BaseModel):

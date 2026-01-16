@@ -8,20 +8,29 @@ def student_answer(req):
     try:
         print("▶ Student query received")
         print("Tenant:", req.tenant_id, "Course:", req.course_id)
+        print("Module:", getattr(req, "module", None))
 
         collection = get_collection("course_content")
 
         print("▶ Querying ChromaDB...")
+
+        # 🔒 Base filters (always enforced)
+        filters = [
+            {"tenant_id": str(req.tenant_id)},
+            {"course_id": str(req.course_id)},
+            {"scope": "course_content"}   # IMPORTANT: student-safe scope
+        ]
+
+        # 🎯 Optional narrowing by module / week
+        if getattr(req, "module", None):
+            filters.append({"module": str(req.module)})
+
         res = collection.query(
             query_texts=[req.question],
             n_results=5,
             where={
-                "$and": [
-                    {"tenant_id": str(req.tenant_id)},
-                    {"course_id": str(req.course_id)}
-                ]
+                "$and": filters
             }
-
         )
 
         print("▶ Raw Chroma result:", res)
@@ -42,18 +51,23 @@ def student_answer(req):
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
             messages=[
-                {"role": "system", "content": "Answer using course content only."},
-                {"role": "user", "content": f"{context}\n\nQuestion: {req.question}"}
+                {
+                    "role": "system",
+                    "content": "Answer using course content only. Do not add external knowledge."
+                },
+                {
+                    "role": "user",
+                    "content": f"{context}\n\nQuestion: {req.question}"
+                }
             ],
             temperature=0.2
         )
 
         return response.choices[0].message.content.strip()
 
-
     except Exception as e:
-
         import traceback
         traceback.print_exc()
         return f"Internal error: {str(e)}"
+
 
