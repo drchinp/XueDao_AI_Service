@@ -7,7 +7,7 @@ echo "🚀 Deploying XueDao AI Service (existing repo)..."
 # CONFIG
 # ===============================
 APP_DIR="/var/www/xuedao-ai-service"
-PYTHON_BIN="/usr/bin/python3.11"
+PYTHON_BIN="/usr/bin/python3.10"
 VENV_DIR="$APP_DIR/venv"
 BRANCH="main"
 
@@ -20,10 +20,11 @@ echo "📦 Installing system dependencies..."
 sudo apt update
 sudo apt install -y \
   git \
-  python3.11 \
-  python3.11-venv \
-  python3.11-dev \
+  python3 \
+  python3-venv \
+  python3-dev \
   build-essential
+
 
 # ===============================
 # GIT UPDATE (NO CLONE)
